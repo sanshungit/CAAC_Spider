@@ -62,5 +62,5 @@ def download_file(page):
     return
 
 
-for i in range(2, 14):
+for i in range(1, 27):
     download_file(page=i)
