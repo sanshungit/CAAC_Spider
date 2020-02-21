@@ -4,7 +4,7 @@ import os
 
 
 def fileDir_get(title):
-    file_path = '.\\' + title
+    file_path = '.\\' + title.repalce('[<>]','_')
     isExists = os.path.exists(file_path)
     if not isExists:
         os.makedirs(file_path)
@@ -46,7 +46,7 @@ def download_file(page):
             temp_pdf = link_pdf.get('href').split("/")
             temp_item[-1] = temp_pdf[-1]
             url_pdf = '/'.join(temp_item)
-            file_name = file_path + '\\' + str(link_pdf.string)
+            file_name = file_path + '\\' + str(link_pdf.string).replace('/','')
             pdf_html = requests.get(url_pdf, headers=headers)
             fo = open(file_name, 'wb')
             fo.write(pdf_html.content)
