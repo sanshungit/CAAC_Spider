@@ -1,10 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import re
 
 
 def fileDir_get(title):
-    file_path = '.\\' + title.repalce('[<>]','_')
+    # 利用正则表达式替换文件名中的非法字符
+    title = re.sub(r'[<.>\'?|*:"/\\]', '_', title)
+    file_path = '.\\' + title
     isExists = os.path.exists(file_path)
     if not isExists:
         os.makedirs(file_path)
@@ -46,13 +49,14 @@ def download_file(page):
             temp_pdf = link_pdf.get('href').split("/")
             temp_item[-1] = temp_pdf[-1]
             url_pdf = '/'.join(temp_item)
-            file_name = file_path + '\\' + str(link_pdf.string).replace('/','')
+            # 利用正则表达式替换PDF文件名中的非法字符
+            file_name = file_path + '\\' + re.sub(r'[<>\'?|*:"/\\]', '-', str(link_pdf.string))
             pdf_html = requests.get(url_pdf, headers=headers)
             fo = open(file_name, 'wb')
             fo.write(pdf_html.content)
             fo.close()
-        file_name = file_path + '\\' + item_title + '.txt'
-        fo = open(file_name, 'w')
+        file_name = file_path + '\\' + re.sub(r'[<>\'?|*:"/\\]', '-', item_title) + '.txt'
+        fo = open(file_name, 'w', encoding='utf-8')
         for line_text in item_text:
             temp_soup = BeautifulSoup(str(line_text), 'lxml').text
             fo.writelines(temp_soup)
@@ -62,5 +66,5 @@ def download_file(page):
     return
 
 
-for i in range(1, 27):
+for i in range(26, 0, -1):
     download_file(page=i)
